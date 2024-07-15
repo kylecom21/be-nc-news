@@ -1,10 +1,26 @@
 const express = require("express");
 const app = express();
-const { getTopics, getEndpoints } = require("./controllers/topics-controller");
+const { getTopics, getEndpoints, getArticleById } = require("./controllers/topics-controller");
 
 app.get("/api", getEndpoints)
 
 app.get("/api/topics" , getTopics)
+
+app.get("/api/articles/:article_id" , getArticleById)
+
+app.use((err,request,response,next) => {
+  if(err.code === '22P02'){
+    response.status(400).send({message: 'Bad Request'})
+  }
+  next(err)
+})
+
+app.use((err,request,response,next) => {
+    if(err.status && err.message){
+        response.status(err.status).send({message: err.message})
+    }
+    next(err)
+})
 
 app.use((err,request,response,next) => {
     response.status(500).send({message: "Internal Server Error"})
