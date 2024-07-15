@@ -66,10 +66,39 @@ describe("/api/articles/:article_id", () => {
   });
   test("GET 404: Sends an appropriate status and error message when given a valid but non-existent id", () => {
     return request(app)
-    .get("/api/articles/9999")
-    .expect(404)
-    .then((response) => {
-      expect(response.body.message).toBe('Article does not exist')
-    })
+      .get("/api/articles/9999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe("Article does not exist");
+      });
+  });
+});
+
+describe("/api/articles", () => {
+  test("GET 200: Should return an array of all article objects with the following properties", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        body.articles.forEach((article) => ({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(Number),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(Number),
+        }));
+      });
+  });
+  test("?sort_by = created_at: Should return all the article objects with all properties sorted by created_at ", () => {
+    request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at");
+      });
   });
 });
