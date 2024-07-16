@@ -85,6 +85,14 @@ function updateArticleVotes(article_id, inc_votes) {
     });
 }
 
+function removeCommentById(comment_id) {
+  return db
+    .query("DELETE FROM comments WHERE comment_id = $1 RETURNING *", [comment_id])
+    .then(() => {
+      return;
+    });
+}
+
 module.exports = {
   fetchTopics,
   fetchArticleById,
@@ -92,4 +100,5 @@ module.exports = {
   fetchArticleComments,
   addArticleComment,
   updateArticleVotes,
+  removeCommentById,
 };
