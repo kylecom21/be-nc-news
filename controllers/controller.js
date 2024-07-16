@@ -4,9 +4,9 @@ const {
   fetchArticles,
   fetchArticleComments,
   addArticleComment,
+  updateArticleVotes,
 } = require("../models/model");
 const endpoints = require("../endpoints.json");
-const { response } = require("../app");
 
 function getTopics(request, response) {
   fetchTopics().then((topics) => {
@@ -53,13 +53,26 @@ function getArticleComments(request, response, next) {
 function createArticleComment(request, response, next) {
   const { article_id } = request.params;
   const { username, body } = request.body;
-  addArticleComment(article_id, username, body).then((comment) => {
-    response.status(201).send({comment})
-  }).catch((err) => {
-    next(err)
-  })
+  addArticleComment(article_id, username, body)
+    .then((comment) => {
+      response.status(201).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
 }
 
+function patchArticleVotes(request, response, next) {
+  const { article_id } = request.params;
+  const { inc_votes } = request.body;
+  updateArticleVotes(article_id, inc_votes)
+    .then((article) => {
+      response.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
 
 module.exports = {
   getTopics,
@@ -68,4 +81,5 @@ module.exports = {
   getArticles,
   getArticleComments,
   createArticleComment,
+  patchArticleVotes,
 };

@@ -7,6 +7,7 @@ const {
   getArticles,
   getArticleComments,
   createArticleComment,
+  patchArticleVotes,
 } = require("./controllers/controller");
 
 app.use(express.json());
@@ -23,9 +24,11 @@ app.get("/api/articles/:article_id/comments", getArticleComments);
 
 app.post("/api/articles/:article_id/comments", createArticleComment)
 
+app.patch("/api/articles/:article_id",patchArticleVotes )
+
 
 app.use((err, request, response, next) => {
-  if (err.code === "22P02" ||err.code === '23502' ) {
+  if (err.code === "22P02" ||err.code === '23502'|| err.code === "23503" ) {
     response.status(400).send({ message: "Bad Request" });
   }
   next(err);
