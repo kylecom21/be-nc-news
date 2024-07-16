@@ -1,14 +1,14 @@
 const db = require("../db/connection");
 
 function fetchTopics() {
-  return db.query(`SELECT * FROM topics`).then((topics) => {
+  return db.query('SELECT * FROM topics').then((topics) => {
     return topics.rows;
   });
 }
 
 function fetchArticleById(article_id) {
   return db
-    .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
+    .query('SELECT * FROM articles WHERE article_id = $1', [article_id])
     .then((article) => {
       if (article.rows.length === 0) {
         return Promise.reject({
@@ -34,4 +34,16 @@ function fetchArticles() {
     });
 }
 
-module.exports = { fetchTopics, fetchArticleById, fetchArticles };
+function fetchArticleComments (article_id) {
+return db.query('SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC' , [article_id]).then((comments) => {
+  if(comments.rows.length === 0){
+    return Promise.reject({
+      status: 404,
+      message: "Article does not exist",
+    });
+  }
+  return comments.rows
+})
+}
+
+module.exports = { fetchTopics, fetchArticleById, fetchArticles, fetchArticleComments };

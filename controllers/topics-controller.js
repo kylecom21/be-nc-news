@@ -2,6 +2,7 @@ const {
   fetchTopics,
   fetchArticleById,
   fetchArticles,
+  fetchArticleComments,
 } = require("../models/topics-model");
 const endpoints = require("../endpoints.json");
 
@@ -36,4 +37,19 @@ function getArticles(request, response, next) {
     });
 }
 
-module.exports = { getTopics, getEndpoints, getArticleById, getArticles };
+function getArticleComments(request, response, next) {
+  const { article_id } = request.params;
+  fetchArticleComments(article_id).then((comments) => {
+    response.status(200).send({ comments });
+  }).catch((err) => {
+    next(err)
+  })
+}
+
+module.exports = {
+  getTopics,
+  getEndpoints,
+  getArticleById,
+  getArticles,
+  getArticleComments,
+};
