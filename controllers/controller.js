@@ -3,8 +3,10 @@ const {
   fetchArticleById,
   fetchArticles,
   fetchArticleComments,
-} = require("../models/topics-model");
+  addArticleComment,
+} = require("../models/model");
 const endpoints = require("../endpoints.json");
+const { response } = require("../app");
 
 function getTopics(request, response) {
   fetchTopics().then((topics) => {
@@ -39,12 +41,25 @@ function getArticles(request, response, next) {
 
 function getArticleComments(request, response, next) {
   const { article_id } = request.params;
-  fetchArticleComments(article_id).then((comments) => {
-    response.status(200).send({ comments });
+  fetchArticleComments(article_id)
+    .then((comments) => {
+      response.status(200).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
+function createArticleComment(request, response, next) {
+  const { article_id } = request.params;
+  const { username, body } = request.body;
+  addArticleComment(article_id, username, body).then((comment) => {
+    response.status(201).send({comment})
   }).catch((err) => {
     next(err)
   })
 }
+
 
 module.exports = {
   getTopics,
@@ -52,4 +67,5 @@ module.exports = {
   getArticleById,
   getArticles,
   getArticleComments,
+  createArticleComment,
 };

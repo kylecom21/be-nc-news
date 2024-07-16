@@ -120,6 +120,14 @@ describe("/api/articles/:article_id/comments", () => {
         }));
       });
   });
+  test("GET 200: Should return an empty array when the article passed has no comments" , () => {
+    return request(app)
+      .get("/api/articles/4/comments")
+      .expect(200)
+      .then(({body}) => {
+        expect(body.comments).toEqual([])
+      })
+  })
   test("GET 200: Should return all the comments objects sorted by created_at in DESC order", () => {
     return request(app)
       .get("/api/articles/1/comments")
@@ -144,4 +152,31 @@ describe("/api/articles/:article_id/comments", () => {
         expect(response.body.message).toBe("Article does not exist");
       });
   });
+  test("POST 201: Inserts a new comment to the db for that article and return the new comment", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "this sucks",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment.comment_id).toBe(19);
+        expect(body.comment.body).toBe("this sucks");
+        expect(body.comment.author).toBe("butter_bridge");
+      });
+  });
+  test("POST 400: Sends an appropraite status and error message when given a bad comment (no body)" , () => {
+    const newComment = {
+      username: "butter_bridge"
+    };
+    return request(app)
+    .post("/api/articles/2/comments")
+    .send(newComment)
+    .expect(400)
+    .then(({body}) => {
+      expect(body.message).toBe('Bad Request')
+    })
+  })
 });
