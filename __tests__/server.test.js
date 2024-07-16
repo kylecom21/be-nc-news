@@ -93,12 +93,12 @@ describe("/api/articles", () => {
         }));
       });
   });
-  test("?sort_by = created_at: Should return all the article objects with all properties sorted by created_at ", () => {
-    request(app)
+  test("GET 200: Should return all the article objects with all properties sorted by created_at in DESC order ", () => {
+    return request(app)
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toBeSortedBy("created_at");
+        expect(body.articles).toBeSortedBy("created_at", {descending: true });
       });
   });
 });
