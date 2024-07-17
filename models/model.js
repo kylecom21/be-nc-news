@@ -1,3 +1,4 @@
+const { errorMonitor } = require("supertest/lib/test");
 const db = require("../db/connection");
 
 function fetchTopics() {
@@ -78,7 +79,7 @@ function updateArticleVotes(article_id, inc_votes) {
       if (article.rows.length === 0) {
         return Promise.reject({
           status: 404,
-          message: "Article does not exist",
+          message: "Article doesn't exist",
         });
       }
       return article.rows[0];
@@ -88,8 +89,13 @@ function updateArticleVotes(article_id, inc_votes) {
 function removeCommentById(comment_id) {
   return db
     .query("DELETE FROM comments WHERE comment_id = $1 RETURNING *", [comment_id])
-    .then(() => {
-      return;
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          message: "Comment doesn't exist",
+        });
+      }
     });
 }
 

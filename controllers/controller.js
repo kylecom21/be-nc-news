@@ -76,8 +76,8 @@ function patchArticleVotes(request, response, next) {
 }
 
 function deleteCommentByID(request, response, next) {
-  const { commentID } = request.params;
-  removeCommentById(commentID).then(() => {
+  const { comment_id } = request.params;
+  removeCommentById(comment_id).then(() => {
     response.status(204).send()
   }).catch((err) => {
     next(err)

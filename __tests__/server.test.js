@@ -121,7 +121,7 @@ describe("/api/articles/:article_id", () => {
       .send(updatedVotes)
       .expect(404)
       .then((response) => {
-        expect(response.body.message).toBe("Article does not exist");
+        expect(response.body.message).toBe("Article doesn't exist");
       });
   });
   test("PATCH 400: Sends an appropriate status and error message when given no vote to update", () => {
@@ -302,12 +302,20 @@ describe("/api/comments/:comment_id", () => {
   test("DELETE 204: Should delete the give comment and send nothing back", () => {
     return request(app).delete("/api/comments/2").expect(204);
   });
-  // test("DELETE 400: Sends an appropriate status and error message when given an invalid id", () => {
-  //   return request(app)
-  //     .delete("/api/comments/not-a-valid-id")
-  //     .expect(400)
-  //     .then(({ body }) => {
-  //       expect(body.message).toBe("Bad Request");
-  //     });
-  // });
+  test("DELETE 400: Sends an appropriate status and error message when given an invalid id", () => {
+    return request(app)
+      .delete("/api/comments/invalid_id")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad Request");
+      });
+  });
+  test("DELETE 404: Sends an appropriate status and error message when given a valid but non-existent id", () => {
+    return request(app)
+    .delete("/api/comments/9999")
+    .expect(404)
+    .then(({body}) => {
+      expect(body.message).toBe("Comment doesn't exist")
+    })
+  })
 });
