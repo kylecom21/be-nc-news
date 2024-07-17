@@ -6,6 +6,7 @@ const {
   addArticleComment,
   updateArticleVotes,
   removeCommentById,
+  fetchUsers,
 } = require("../models/model");
 const endpoints = require("../endpoints.json");
 
@@ -77,11 +78,19 @@ function patchArticleVotes(request, response, next) {
 
 function deleteCommentByID(request, response, next) {
   const { comment_id } = request.params;
-  removeCommentById(comment_id).then(() => {
-    response.status(204).send()
-  }).catch((err) => {
-    next(err)
-  })
+  removeCommentById(comment_id)
+    .then(() => {
+      response.status(204).send();
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
+function getUsers(request, response) {
+  fetchUsers().then((users) => {
+    response.status(200).send({ users });
+  });
 }
 
 module.exports = {
@@ -93,4 +102,5 @@ module.exports = {
   createArticleComment,
   patchArticleVotes,
   deleteCommentByID,
+  getUsers,
 };

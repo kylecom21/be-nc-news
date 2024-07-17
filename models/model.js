@@ -88,7 +88,9 @@ function updateArticleVotes(article_id, inc_votes) {
 
 function removeCommentById(comment_id) {
   return db
-    .query("DELETE FROM comments WHERE comment_id = $1 RETURNING *", [comment_id])
+    .query("DELETE FROM comments WHERE comment_id = $1 RETURNING *", [
+      comment_id,
+    ])
     .then((result) => {
       if (result.rows.length === 0) {
         return Promise.reject({
@@ -99,6 +101,13 @@ function removeCommentById(comment_id) {
     });
 }
 
+function fetchUsers() {
+  return db.query("SELECT * FROM users")
+  .then((users) => {
+    return users.rows
+  });
+}
+
 module.exports = {
   fetchTopics,
   fetchArticleById,
@@ -107,4 +116,5 @@ module.exports = {
   addArticleComment,
   updateArticleVotes,
   removeCommentById,
+  fetchUsers,
 };
