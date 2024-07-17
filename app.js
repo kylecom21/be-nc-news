@@ -8,6 +8,7 @@ const {
   getArticleComments,
   createArticleComment,
   patchArticleVotes,
+  deleteCommentByID,
 } = require("./controllers/controller");
 
 app.use(express.json());
@@ -26,6 +27,7 @@ app.post("/api/articles/:article_id/comments", createArticleComment)
 
 app.patch("/api/articles/:article_id",patchArticleVotes )
 
+app.delete("/api/comments/:comment_id", deleteCommentByID)
 
 app.use((err, request, response, next) => {
   if (err.code === "22P02" ||err.code === '23502'|| err.code === "23503" ) {
