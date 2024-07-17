@@ -144,6 +144,22 @@ describe("/api/articles/:article_id", () => {
         expect(response.body.message).toBe("Bad Request");
       });
   });
+  test("GET 200: Should return the single article passed with the added comment count property" , () => {
+    return request(app)
+    .get("/api/articles/9")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.article.comment_count).toBe("2")
+    })
+  })
+  test("GET 200: Should return the comment_count as 0 when passed with an article with no comments" , () => {
+    return request(app)
+    .get("/api/articles/8")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.article.comment_count).toBe("0")
+    })
+  })
 });
 
 describe("/api/articles", () => {

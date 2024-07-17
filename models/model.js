@@ -9,7 +9,12 @@ function fetchTopics() {
 
 function fetchArticleById(article_id) {
   return db
-    .query("SELECT * FROM articles WHERE article_id = $1", [article_id])
+    .query(`SELECT articles.* ,
+    COUNT(comments.comment_id) AS comment_count 
+    FROM articles 
+    LEFT JOIN comments ON articles.article_id = comments.article_id
+    WHERE articles.article_id = $1
+    GROUP BY articles.article_id`,[article_id])
     .then((article) => {
       if (article.rows.length === 0) {
         return Promise.reject({
@@ -17,6 +22,7 @@ function fetchArticleById(article_id) {
           message: "Article does not exist",
         });
       }
+
       return article.rows[0];
     });
 }
@@ -55,10 +61,9 @@ function fetchArticles(sort_by = "created_at", order_by = "DESC", topic) {
 
   sqlString += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order_by}`;
 
-  return db
-    .query(sqlString, queryValues).then((articles) => {
-      return articles.rows;
-    });
+  return db.query(sqlString, queryValues).then((articles) => {
+    return articles.rows;
+  });
 }
 
 function fetchArticleComments(article_id) {
