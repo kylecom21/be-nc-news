@@ -39,12 +39,18 @@ function fetchArticles(sort_by = "created_at", order_by = "DESC", topic) {
 
   const validOrderBys = [`ASC`, `DESC`];
 
+  const validTopics = ["mitch","cats","paper"]
+
   if (!validSortBys.includes(sort_by)) {
     sort_by = "created_at";
   }
 
   if (!validOrderBys.includes(order_by)) {
     order_by = "DESC";
+  }
+
+  if(!validTopics.includes(topic)){
+    topic = ""
   }
 
   let sqlString = `SELECT articles.article_id, title, topic, articles.author, articles.created_at, articles.votes, article_img_url, 
