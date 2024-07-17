@@ -144,22 +144,22 @@ describe("/api/articles/:article_id", () => {
         expect(response.body.message).toBe("Bad Request");
       });
   });
-  test("GET 200: Should return the single article passed with the added comment count property" , () => {
+  test("GET 200: Should return the single article passed with the added comment count property", () => {
     return request(app)
-    .get("/api/articles/9")
-    .expect(200)
-    .then(({ body }) => {
-      expect(body.article.comment_count).toBe("2")
-    })
-  })
-  test("GET 200: Should return the comment_count as 0 when passed with an article with no comments" , () => {
+      .get("/api/articles/9")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.comment_count).toBe("2");
+      });
+  });
+  test("GET 200: Should return the comment_count as 0 when passed with an article with no comments", () => {
     return request(app)
-    .get("/api/articles/8")
-    .expect(200)
-    .then(({ body }) => {
-      expect(body.article.comment_count).toBe("0")
-    })
-  })
+      .get("/api/articles/8")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.comment_count).toBe("0");
+      });
+  });
 });
 
 describe("/api/articles", () => {
@@ -191,67 +191,85 @@ describe("/api/articles", () => {
         });
       });
   });
-  test("?sort_by=author: Should return all articles objects with all properties sorted by author and ordered by default" , () => {
+  test("?sort_by=author: Should return all articles objects with all properties sorted by author and ordered by default", () => {
     return request(app)
-    .get("/api/articles?sort_by=author")
-    .expect(200)
-    .then(({body}) => {
-      expect(body.articles).toBeSortedBy("author" , {descending: true,})
-    })
-  })
+      .get("/api/articles?sort_by=author")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("author", { descending: true });
+      });
+  });
   test("?sort_by=title: Should return all articles objects with all properties sorted by author and ordered by default", () => {
     return request(app)
-    .get("/api/articles?sort_by=title")
-    .expect(200)
-    .then(({body}) => {
-      expect(body.articles).toBeSortedBy("title" , {descending: true,})
-    })
-  })
-  test("?order_by=ASC: Should return all articles objects with all properties sorted by default and ordered by asecending" , () => {
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("title", { descending: true });
+      });
+  });
+  test("?order_by=ASC: Should return all articles objects with all properties sorted by default and ordered by asecending", () => {
     return request(app)
-    .get("/api/articles?order_by=ASC")
-    .expect(200)
-    .then(({body}) => {
-      expect(body.articles).toBeSortedBy("created_at" , {ascending: true,})
-    })
-  })
-  test("?sort_by=votes&order_by=ASC: Should return all articles objects with all properties sorted by votes and ordered by asecending" , () => {
+      .get("/api/articles?order_by=ASC")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { ascending: true });
+      });
+  });
+  test("?sort_by=votes&order_by=ASC: Should return all articles objects with all properties sorted by votes and ordered by asecending", () => {
     return request(app)
-    .get("/api/articles?sort_by=votes&order_by=ASC")
-    .expect(200)
-    .then(({body}) => {
-      expect(body.articles).toBeSortedBy("votes" , {ascending: true,})
-    })
-  })
-  test("?invalid sort_by 200: Should return all articles objects with all properties sorted by and ordered by default" , () => {
+      .get("/api/articles?sort_by=votes&order_by=ASC")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("votes", { ascending: true });
+      });
+  });
+  test("?invalid sort_by 200: Should return all articles objects with all properties sorted by and ordered by default", () => {
     return request(app)
-    .get("/api/articles?sort_by=not_a_valid_sort")
-    .expect(200)
-    .then(({body}) => {
-      expect(body.articles).toBeSortedBy("created_at", {descending: true,})
-    })
-  })
-  test("?invalid order_by 200: Should return all articles objects with all properties sorted by and ordered by default" , () => {
+      .get("/api/articles?sort_by=not_a_valid_sort")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("?invalid order_by 200: Should return all articles objects with all properties sorted by and ordered by default", () => {
     return request(app)
-    .get("/api/articles?order_by=not_a_valid-_order")
-    .expect(200)
-    .then(({body}) => {
-      expect(body.articles).toBeSortedBy("created_at", {descending: true,})
-    })
-  })
+      .get("/api/articles?order_by=not_a_valid-_order")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
   test("?topic=mictch 200: Should return all articles with the topic of mitch with properties sorted and ordered by default", () => {
     return request(app)
-    .get("/api/articles?topic=mitch")
-    .expect(200)
-    .then(({body}) => {
-      expect(body.articles).toBeSortedBy("created_at", {descending: true,})
-      expect(body.articles.length).toBe(12)
-      body.articles.forEach((article) => {
-        expect(article.topic).toBe('mitch')
-      })
-    })
-  })
-  
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+        expect(body.articles.length).toBe(12);
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+  test("?topic=paper 200: Should return an empty array of articles whern passed a topic with no articles associated", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(0);
+      });
+  });
+  test("?topic=not_a_topic 200: Should return all articles if passed an invlaid topic as it will be accepted as not passing a topic", () => {
+    return request(app)
+      .get("/api/articles?topic=not_a_topic")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
+        expect(body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
 });
 
 describe("/api/articles/:article_id/comments", () => {
@@ -389,26 +407,26 @@ describe("/api/comments/:comment_id", () => {
   });
   test("DELETE 404: Sends an appropriate status and error message when given a valid but non-existent id", () => {
     return request(app)
-    .delete("/api/comments/9999")
-    .expect(404)
-    .then(({body}) => {
-      expect(body.message).toBe("Comment doesn't exist")
-    })
-  })
+      .delete("/api/comments/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Comment doesn't exist");
+      });
+  });
 });
 
-describe("/api/users" , () => {
-  test("GET 200: should return an array of all user objects with the following properties" , () => {
+describe("/api/users", () => {
+  test("GET 200: should return an array of all user objects with the following properties", () => {
     return request(app)
-    .get("/api/users")
-    .expect(200)
-    .then(({body}) => {
-      expect(body.users.length).toBe(4)
-      body.users.forEach((user) => ({
-        username: expect.any(String),
-        name: expect.any(String),
-        avatar_url: expect.any(String)
-      }))
-    })
-  })
-})
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users.length).toBe(4);
+        body.users.forEach((user) => ({
+          username: expect.any(String),
+          name: expect.any(String),
+          avatar_url: expect.any(String),
+        }));
+      });
+  });
+});
