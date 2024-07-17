@@ -21,14 +21,33 @@ function fetchArticleById(article_id) {
     });
 }
 
-function fetchArticles() {
+function fetchArticles(sort_by = "created_at" , order_by = "DESC") {
+  const validSortBys = [
+    `article_id`,
+    `title`,
+    `topic`,
+    `author`,
+    `created_at`,
+    `votes`,
+  ];
+
+const validOrderBys = [`ASC` , `DESC`]
+
+  if(!validSortBys.includes(sort_by)){
+    return Promise.reject({ status: 400, message: "Invalid query" });
+  }
+
+  if(!validOrderBys.includes(order_by)){
+    return Promise.reject({ status: 400, message: "Invalid query" });
+  }
+
   return db
     .query(
       `SELECT articles.article_id, title, topic, articles.author, articles.created_at, articles.votes, article_img_url, 
     COUNT(comment_id) AS comment_count 
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id ORDER BY articles.created_at DESC `
+    GROUP BY articles.article_id ORDER BY ${sort_by} ${order_by} `
     )
     .then((articles) => {
       return articles.rows;
@@ -102,9 +121,8 @@ function removeCommentById(comment_id) {
 }
 
 function fetchUsers() {
-  return db.query("SELECT * FROM users")
-  .then((users) => {
-    return users.rows
+  return db.query("SELECT * FROM users").then((users) => {
+    return users.rows;
   });
 }
 

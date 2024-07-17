@@ -32,7 +32,8 @@ function getArticleById(request, response, next) {
 }
 
 function getArticles(request, response, next) {
-  fetchArticles()
+  const { sort_by , order_by } = request.query;
+  fetchArticles(sort_by, order_by)
     .then((articles) => {
       response.status(200).send({ articles });
     })
@@ -87,10 +88,12 @@ function deleteCommentByID(request, response, next) {
     });
 }
 
-function getUsers(request, response) {
+function getUsers(request, response, next) {
   fetchUsers().then((users) => {
     response.status(200).send({ users });
-  });
+  }).catch((err) => {
+    next(err)
+  })
 }
 
 module.exports = {

@@ -165,7 +165,7 @@ describe("/api/articles", () => {
         }));
       });
   });
-  test("GET 200: Should return all the article objects with all properties sorted by created_at in DESC order ", () => {
+  test("GET 200: Should return all the article objects with all properties sorted by created_at in DESC order as defaults", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -175,6 +175,54 @@ describe("/api/articles", () => {
         });
       });
   });
+  test("?sort_by=author: Should return all articles objects with all properties sorted by author and ordered by default" , () => {
+    return request(app)
+    .get("/api/articles?sort_by=author")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles).toBeSortedBy("author" , {descending: true,})
+    })
+  })
+  test("?sort_by=title: Should return all articles objects with all properties sorted by author and ordered by default", () => {
+    return request(app)
+    .get("/api/articles?sort_by=title")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles).toBeSortedBy("title" , {descending: true,})
+    })
+  })
+  test("?order_by=ASC: Should return all articles objects with all properties sorted by default and ordered by asecending" , () => {
+    return request(app)
+    .get("/api/articles?order_by=ASC")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles).toBeSortedBy("created_at" , {ascending: true,})
+    })
+  })
+  test("?sort_by=votes&order_by=ASC: Should return all articles objects with all properties sorted by votes and ordered by asecending" , () => {
+    return request(app)
+    .get("/api/articles?sort_by=votes&order_by=ASC")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles).toBeSortedBy("votes" , {ascending: true,})
+    })
+  })
+  test("?invalid sort_by 400: Should return all articles objects with all properties sorted by votes and ordered by asecending" , () => {
+    return request(app)
+    .get("/api/articles?sort_by=not_a_valid_sort")
+    .expect(400)
+    .then(({body}) => {
+      expect(body.message).toBe("Invalid query")
+    })
+  })
+  test("?invalid order_by 400: Should return all articles objects with all properties sorted by votes and ordered by asecending" , () => {
+    return request(app)
+    .get("/api/articles?order_by=not_a_valid-_order")
+    .expect(400)
+    .then(({body}) => {
+      expect(body.message).toBe("Invalid query")
+    })
+  })
 });
 
 describe("/api/articles/:article_id/comments", () => {
