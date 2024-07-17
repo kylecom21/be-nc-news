@@ -21,7 +21,7 @@ function fetchArticleById(article_id) {
     });
 }
 
-function fetchArticles(sort_by = "created_at" , order_by = "DESC") {
+function fetchArticles(sort_by = "created_at", order_by = "DESC", topic) {
   const validSortBys = [
     `article_id`,
     `title`,
@@ -31,25 +31,32 @@ function fetchArticles(sort_by = "created_at" , order_by = "DESC") {
     `votes`,
   ];
 
-const validOrderBys = [`ASC` , `DESC`]
+  const validOrderBys = [`ASC`, `DESC`];
 
-  if(!validSortBys.includes(sort_by)){
-    return Promise.reject({ status: 400, message: "Invalid query" });
+  if (!validSortBys.includes(sort_by)) {
+    sort_by = "created_at";
   }
 
-  if(!validOrderBys.includes(order_by)){
-    return Promise.reject({ status: 400, message: "Invalid query" });
+  if (!validOrderBys.includes(order_by)) {
+    order_by = "DESC";
   }
+
+  let sqlString = `SELECT articles.article_id, title, topic, articles.author, articles.created_at, articles.votes, article_img_url, 
+  COUNT(comment_id) AS comment_count 
+  FROM articles
+  LEFT JOIN comments ON articles.article_id = comments.article_id`;
+
+  const queryValues = [];
+
+  if (topic) {
+    sqlString += ` WHERE topic = $1`;
+    queryValues.push(topic);
+  }
+
+  sqlString += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order_by}`;
 
   return db
-    .query(
-      `SELECT articles.article_id, title, topic, articles.author, articles.created_at, articles.votes, article_img_url, 
-    COUNT(comment_id) AS comment_count 
-    FROM articles
-    LEFT JOIN comments ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id ORDER BY ${sort_by} ${order_by} `
-    )
-    .then((articles) => {
+    .query(sqlString, queryValues).then((articles) => {
       return articles.rows;
     });
 }

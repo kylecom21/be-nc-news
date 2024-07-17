@@ -207,22 +207,35 @@ describe("/api/articles", () => {
       expect(body.articles).toBeSortedBy("votes" , {ascending: true,})
     })
   })
-  test("?invalid sort_by 400: Should return all articles objects with all properties sorted by votes and ordered by asecending" , () => {
+  test("?invalid sort_by 200: Should return all articles objects with all properties sorted by and ordered by default" , () => {
     return request(app)
     .get("/api/articles?sort_by=not_a_valid_sort")
-    .expect(400)
+    .expect(200)
     .then(({body}) => {
-      expect(body.message).toBe("Invalid query")
+      expect(body.articles).toBeSortedBy("created_at", {descending: true,})
     })
   })
-  test("?invalid order_by 400: Should return all articles objects with all properties sorted by votes and ordered by asecending" , () => {
+  test("?invalid order_by 200: Should return all articles objects with all properties sorted by and ordered by default" , () => {
     return request(app)
     .get("/api/articles?order_by=not_a_valid-_order")
-    .expect(400)
+    .expect(200)
     .then(({body}) => {
-      expect(body.message).toBe("Invalid query")
+      expect(body.articles).toBeSortedBy("created_at", {descending: true,})
     })
   })
+  test("?topic=mictch 200: Should return all articles with the topic of mitch with properties sorted and ordered by default", () => {
+    return request(app)
+    .get("/api/articles?topic=mitch")
+    .expect(200)
+    .then(({body}) => {
+      expect(body.articles).toBeSortedBy("created_at", {descending: true,})
+      expect(body.articles.length).toBe(12)
+      body.articles.forEach((article) => {
+        expect(article.topic).toBe('mitch')
+      })
+    })
+  })
+  
 });
 
 describe("/api/articles/:article_id/comments", () => {
