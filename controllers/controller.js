@@ -32,8 +32,8 @@ function getArticleById(request, response, next) {
 }
 
 function getArticles(request, response, next) {
-  const { sort_by , order_by } = request.query;
-  fetchArticles(sort_by, order_by)
+  const { sort_by , order_by, topic} = request.query;
+  fetchArticles(sort_by, order_by, topic)
     .then((articles) => {
       response.status(200).send({ articles });
     })

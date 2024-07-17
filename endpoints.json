@@ -26,6 +26,10 @@
       {
         "field": "order_by",
         "values": ["DESC","ASC"]
+      },
+      {
+        "field": "topic",
+        "values": ["mitch", "cats"]
       }
     ],
     "exampleResponse": {
