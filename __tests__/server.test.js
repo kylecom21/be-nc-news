@@ -259,15 +259,12 @@ describe("/api/articles", () => {
         expect(body.articles.length).toBe(0);
       });
   });
-  test("?topic=not_a_topic 200: Should return all articles if passed an invlaid topic as it will be accepted as not passing a topic", () => {
+  test("?topic=not_a_topic 404: Sends an appropriate status and error message when given a valid but non-existent topic", () => {
     return request(app)
       .get("/api/articles?topic=not_a_topic")
-      .expect(200)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
-        expect(body.articles).toBeSortedBy("created_at", {
-          descending: true,
-        });
+        expect(body.message).toBe("Topic does not exist")
       });
   });
 });
@@ -309,7 +306,7 @@ describe("/api/articles/:article_id/comments", () => {
   });
   test("GET 400: Sends an appropriate status and error message when given an invalid id", () => {
     return request(app)
-      .get("/api/articles/not-a-artice_id/comments")
+      .get("/api/articles/not-a-article_id/comments")
       .expect(400)
       .then((response) => {
         expect(response.body.message).toBe("Bad Request");
