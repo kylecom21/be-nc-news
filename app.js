@@ -1,15 +1,16 @@
 const express = require("express");
 const app = express();
-const routeIndex = require('./routes');
-
+const routeIndex = require("./routes");
+const cors = require("cors");
 
 app.use(express.json());
 
-app.use('/api', routeIndex);
+app.use(cors());
 
+app.use("/api", routeIndex);
 
 app.use((err, request, response, next) => {
-  if (err.code === "22P02" ||err.code === '23502'|| err.code === "23503" ) {
+  if (err.code === "22P02" || err.code === "23502" || err.code === "23503") {
     response.status(400).send({ message: "Bad Request" });
   }
   next(err);
